@@ -1,2 +1,2 @@
 discord==1.0.1
-lark==0.0.4
+lark-parser==0.8.1
