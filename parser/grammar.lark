@@ -1,0 +1,5 @@
+start: WORD "," WORD "!"
+
+%import common.WORD
+%import common.WS
+%ignore WS           // Disregard whitespace in text
