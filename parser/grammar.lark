@@ -1,4 +1,28 @@
-?start: expression
+
+// show x^2
+// evaluate x^2 : x=2
+// graph x^2 : x=[-1,1]
+
+?bot_command: SHOW expression                                         -> cmd_show
+    | EVALUATE expression (":" assignment_list) ?                     -> cmd_evaluate
+    | GRAPH expression ":" assignment_or_range_list                   -> cmd_graph
+
+?assignment_list: assignment ( "," assignment ) *
+
+?assignment_or_range_list: assignment_or_range ( "," assignment_or_range ) *
+
+?assignment_or_range: assignment | range
+
+range: VARIABLE "=" "[" expression "," expression "]"
+
+assignment: VARIABLE "=" expression
+
+SHOW: "$show"
+EVALUATE: "$evaluate"
+GRAPH: "$graph"
+
+variable_assignment: VARIABLE "=" expression
+variable_range: VARIABLE "=" "[" expression "," expression "]"
 
 ?expression: sum
 

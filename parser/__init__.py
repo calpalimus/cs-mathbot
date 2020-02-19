@@ -1,10 +1,17 @@
-from lark import Lark, Transformer, Visitor, v_args
+from lark import Lark, Transformer, Visitor, v_args, exceptions
+import lark.exceptions
 import os
 import math
 
+bot_parser = Lark(
+    open(os.path.join(os.path.dirname(__file__), 'grammar.lark')),
+    lexer = 'standard',
+    start = 'bot_command')
+
 parser = Lark(
     open(os.path.join(os.path.dirname(__file__), 'grammar.lark')),
-    lexer = "standard")
+    lexer = 'standard',
+    start = 'expression')
 
 @v_args(inline=True)
 class StringTransformer(Transformer):
@@ -119,15 +126,50 @@ class Evaluator(Transformer):
         return float(NUMBER.value)
 
     def variable(self, VARIABLE):
-        return self.values[VARIABLE.value]
-    
+        try:
+            return self.values[VARIABLE.value]
+        except KeyError:
+            raise RuntimeError("Unknown variable " + VARIABLE.value)
+   
 def EvaluateExpression(parse_tree, values={}):
     evaluator = Evaluator(values)
-    return evaluator.transform(parse_tree)
+    try:
+        return evaluator.transform(parse_tree)
+    except lark.exceptions.VisitError as e:
+        raise e.orig_exc
+
+class BotCommand(Visitor):
+    def __init__(self):
+        self.result = '???'
+
+    def cmd_evaluate(self, node):
+        expression = node.children[1]
+        if len(node.children) > 2:
+            assignments = node.children[2]
+
+        try:
+            self.result = str(EvaluateExpression(expression))
+        except RuntimeError as e:
+            self.result = 'Error: ' + str(e)
+
+    def cmd_show(self, node):
+        self.result = ParseTreeToString(node.children[1])
+
+def RunBotCommand(command):
+    try:
+        tree = bot_parser.parse(command)
+        evaluator = BotCommand()
+        evaluator.visit(tree)
+        return evaluator.result
+    except lark.exceptions.UnexpectedInput as e:
+        return str(e)
+    return 'Done'
 
 __all__ = [
     'parser',
+    'bot_parser',
     'ParseTreeToString',
     'GetVariables',
     'EvaluateExpression',
+    'RunBotCommand',
 ]
