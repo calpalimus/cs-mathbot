@@ -1,5 +1,34 @@
-start: WORD "," WORD "!"
+?start: expression
 
-%import common.WORD
-%import common.WS
-%ignore WS           // Disregard whitespace in text
+?expression: sum
+
+?sum: sum "+" product                  -> add
+    | sum "-" product                  -> sub
+    | product
+
+?product: product "/" atom_product     -> div
+    | product "*" atom_product         -> mul
+    | atom_product
+
+// A succession of atoms, multiplied together.
+?atom_product: atom
+    | atom ( "." ? atom ) +            -> mul
+    | "-" atom_product                 -> neg
+
+?atom: NUMBER                          -> number
+    | VARIABLE                         -> variable
+    | atom "^" negatable_atom          -> exp
+    | CONSTANT                         -> constant
+    | FUNCTION "(" expression ")"      -> function
+    | "(" expression ")"
+
+?negatable_atom: atom
+    | "-" negatable_atom               -> neg
+
+VARIABLE: "a".."d" | "f".."z"
+FUNCTION: "sinh" | "cosh" | "tanh" | "sin" | "cos" | "tan" | "ln" | "abs"
+CONSTANT: "pi" | "e"
+
+%import common.NUMBER
+%import common.WS_INLINE
+%ignore WS_INLINE
