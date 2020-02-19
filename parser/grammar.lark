@@ -25,6 +25,7 @@
 ?negatable_atom: atom
     | "-" negatable_atom               -> neg
 
+
 VARIABLE: "a".."d" | "f".."z"
 FUNCTION: "sinh" | "cosh" | "tanh" | "sin" | "cos" | "tan" | "ln" | "abs"
 CONSTANT: "pi" | "e"
