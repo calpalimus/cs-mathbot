@@ -1,10 +1,21 @@
 import unittest
-from . import parser, ParseTreeToString
+from . import *
 
 class TestParser(unittest.TestCase):
     def check_parses(self, string, expected = None):
         tree = parser.parse(string)
-        self.assertEquals(ParseTreeToString(tree), expected)
+        self.assertEqual(ParseTreeToString(tree), expected)
+    
+    def test_getVariables(self):
+        self.assertEqual(GetVariables(parser.parse('2x^2+5y')), {'x','y'})
+    
+    def test_evaluateExpression(self):
+        self.assertEqual(
+            EvaluateExpression(parser.parse('sin(1/2*pi)')),
+            1)
+        self.assertEqual(
+            EvaluateExpression(parser.parse('x^2-y'), {'x':5, 'y':2}),
+            23)
 
     def test_expressions(self):
         self.check_parses('2.0',           '2.0')
