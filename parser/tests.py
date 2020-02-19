@@ -4,7 +4,6 @@ from . import parser, ParseTreeToString
 class TestParser(unittest.TestCase):
     def check_parses(self, string, expected = None):
         tree = parser.parse(string)
-        print(ParseTreeToString(tree))
         self.assertEquals(ParseTreeToString(tree), expected)
 
     def test_expressions(self):
