@@ -2,6 +2,7 @@ from lark import Lark, Transformer, Visitor, v_args, exceptions
 import lark.exceptions
 import os
 import math
+import sys
 
 bot_parser = Lark(
     open(os.path.join(os.path.dirname(__file__), 'grammar.lark')),
@@ -141,14 +142,16 @@ def EvaluateExpression(parse_tree, values={}):
 class BotCommand(Visitor):
     def __init__(self):
         self.result = '???'
+        self.assignments = {}
+    
+    def assignment(self, node):
+        self.assignments[node.children[0].value] = EvaluateExpression(node.children[1], self.assignments)
 
     def cmd_evaluate(self, node):
         expression = node.children[1]
-        if len(node.children) > 2:
-            assignments = node.children[2]
 
         try:
-            self.result = str(EvaluateExpression(expression))
+            self.result = str(EvaluateExpression(expression, self.assignments))
         except RuntimeError as e:
             self.result = 'Error: ' + str(e)
 

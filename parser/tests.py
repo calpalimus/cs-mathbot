@@ -17,6 +17,9 @@ class TestParser(unittest.TestCase):
             EvaluateExpression(parser.parse('x^2-y'), {'x':5, 'y':2}),
             23)
 
+    def test_runBotCommand(self):
+        self.assertEqual(RunBotCommand('$evaluate x^y: x=2, y=x+1'), '8.0')
+
     def test_expressions(self):
         self.check_parses('2.0',           '2.0')
         self.check_parses('2',             '2')
