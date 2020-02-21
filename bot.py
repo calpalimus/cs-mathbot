@@ -2,7 +2,10 @@ import discord
 import os
 import latex
 
-from parser import RunBotCommand
+import parser
+
+from parser.interpreter import RunBotCommand
+from parser.latex import ParseTreeToLaTeX
 
 client = discord.Client()
 
@@ -17,7 +20,8 @@ async def on_message(message):
 
     if message.content.startswith('$latex'):
         input_expr = message.content.split(None, 1)[1]
-        png = latex.GeneratePNGFromExpression(input_expr)
+        output_expr = ParseTreeToLaTeX(parser.parser.parse(input_expr))
+        png = latex.GeneratePNGFromExpression(output_expr)
         if png is not None:
             await message.channel.send(file=discord.File(png, 'image.png'))
     elif message.content.startswith('$'):

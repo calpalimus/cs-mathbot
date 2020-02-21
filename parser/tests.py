@@ -4,21 +4,26 @@ from . import *
 class TestParser(unittest.TestCase):
     def check_parses(self, string, expected = None):
         tree = parser.parse(string)
-        self.assertEqual(ParseTreeToString(tree), expected)
+        self.assertEqual(output.ParseTreeToString(tree), expected)
     
+    def test_asLaTeX(self):
+        self.assertEqual(
+            latex.ParseTreeToLaTeX(parser.parse('abs(y) + (cos(x)+x^2)/2')),
+            r'\lvert y \rvert + \frac{\cos(x) + {x}^{2}}{2}')
+
     def test_getVariables(self):
-        self.assertEqual(GetVariables(parser.parse('2x^2+5y')), {'x','y'})
+        self.assertEqual(evaluator.GetVariables(parser.parse('2x^2+5y')), {'x','y'})
     
     def test_evaluateExpression(self):
         self.assertEqual(
-            EvaluateExpression(parser.parse('sin(1/2*pi)')),
+            evaluator.EvaluateExpression(parser.parse('sin(1/2*pi)')),
             1)
         self.assertEqual(
-            EvaluateExpression(parser.parse('x^2-y'), {'x':5, 'y':2}),
+            evaluator.EvaluateExpression(parser.parse('x^2-y'), {'x':5, 'y':2}),
             23)
 
     def test_runBotCommand(self):
-        self.assertEqual(RunBotCommand('$evaluate x^y: x=2, y=x+1'), '8.0')
+        self.assertEqual(interpreter.RunBotCommand('$evaluate x^y: x=2, y=x+1'), '8.0')
 
     def test_expressions(self):
         self.check_parses('2.0',           '2.0')
