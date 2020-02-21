@@ -4,7 +4,7 @@ import discord
 from .evaluator import EvaluateExpression
 from .output import ParseTreeToString
 from .latex import ParseTreeToLaTeX
-from graphics import *
+from graphics.latex import GeneratePNGFromLaTeX
 
 bot_parser = lark.Lark(
     open(os.path.join(os.path.dirname(__file__), 'grammar.lark')),

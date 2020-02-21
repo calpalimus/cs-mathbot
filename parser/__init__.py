@@ -1,12 +1,9 @@
-from lark import Lark, Transformer, Visitor, v_args, exceptions
-import lark.exceptions
+import lark
 import os
-import math
-import sys
 
 from . import evaluator, interpreter, output, latex
 
-parser = Lark(
+parser = lark.Lark(
     open(os.path.join(os.path.dirname(__file__), 'grammar.lark')),
     lexer = 'standard',
     start = 'expression')
