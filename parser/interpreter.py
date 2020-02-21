@@ -30,7 +30,23 @@ class BotCommand(lark.Visitor):
 
     def cmd_graph(self, node):
         expression = node.children[1]
-        self.result = 'graph ' + ParseTreeToString(expression) + ' ranges = ' + str(self.ranges) + ' assignments = ' + str(self.assignments)
+        if len(self.ranges) != 1:
+            self.result = "Can only plot 2D graphs."
+            return
+        range_var = list(self.ranges.keys())[0]
+        range_low = self.ranges[range_var][0]
+        range_high = self.ranges[range_var][1]
+        points = []
+        num_points = 5
+        step = (range_high - range_low) / num_points
+
+        assignments = dict(self.assignments)
+        for i in range(0, num_points + 1):
+            x = range_low + i * step
+            assignments[range_var] = x
+            y = EvaluateExpression(expression, assignments) 
+            points.append((x,y))
+        self.result = "Graph made."
 
     def cmd_evaluate(self, node):
         expression = node.children[1]
