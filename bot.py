@@ -18,14 +18,11 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('$latex'):
-        input_expr = message.content.split(None, 1)[1]
-        output_expr = ParseTreeToLaTeX(parser.parser.parse(input_expr))
-        png = latex.GeneratePNGFromExpression(output_expr)
-        if png is not None:
-            await message.channel.send(file=discord.File(png, 'image.png'))
-    elif message.content.startswith('$'):
+    if message.content.startswith('$'):
         result = RunBotCommand(message.content)
-        await message.channel.send(result)
+        if isinstance(result, discord.File):
+            await message.channel.send(file=result)
+        else:
+            await message.channel.send(result)
 
 client.run(os.getenv('DISCORD_TOKEN'))

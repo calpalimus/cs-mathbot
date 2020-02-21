@@ -6,6 +6,7 @@
 ?bot_command: SHOW expression                                         -> cmd_show
     | EVALUATE expression (":" assignment_list) ?                     -> cmd_evaluate
     | GRAPH expression ":" assignment_or_range_list                   -> cmd_graph
+    | LATEX expression                                                -> cmd_latex
 
 ?assignment_list: assignment ( "," assignment ) *
 
@@ -20,6 +21,7 @@ assignment: VARIABLE "=" expression
 SHOW: "$show"
 EVALUATE: "$evaluate"
 GRAPH: "$graph"
+LATEX: "$latex"
 
 variable_assignment: VARIABLE "=" expression
 variable_range: VARIABLE "=" "[" expression "," expression "]"
