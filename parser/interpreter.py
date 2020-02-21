@@ -12,11 +12,22 @@ class BotCommand(lark.Visitor):
     def __init__(self):
         self.result = '???'
         self.assignments = {}
-    
+        self.ranges = {}
+
+    def range(self, node):
+        self.ranges[node.children[0].value] = (
+            EvaluateExpression(node.children[1], self.assignments),
+            EvaluateExpression(node.children[2], self.assignments)
+        )
+
     def assignment(self, node):
         self.assignments[node.children[0].value] = EvaluateExpression(
             node.children[1],
             self.assignments)
+
+    def cmd_graph(self, node):
+        expression = node.children[1]
+        self.result = 'graph ' + ParseTreeToString(expression) + ' ranges = ' + str(self.ranges) + ' assignments = ' + str(self.assignments)
 
     def cmd_evaluate(self, node):
         expression = node.children[1]
