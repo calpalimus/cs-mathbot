@@ -4,7 +4,7 @@ import discord
 from .evaluator import EvaluateExpression
 from .output import ParseTreeToString
 from .latex import ParseTreeToLaTeX
-from latex import GeneratePNGFromExpression
+from graphics import *
 
 bot_parser = lark.Lark(
     open(os.path.join(os.path.dirname(__file__), 'grammar.lark')),
@@ -63,7 +63,7 @@ class BotCommand(lark.Visitor):
     
     def cmd_latex(self, node):
         latex_expression = ParseTreeToLaTeX(node.children[1])
-        png = GeneratePNGFromExpression(latex_expression)
+        png = GeneratePNGFromLaTeX(latex_expression)
         if png is not None:
             self.result = discord.File(png,"input.png")
         else: 

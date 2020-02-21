@@ -3,7 +3,7 @@ import io
 import tempfile
 import subprocess
 
-def GeneratePNGFromExpression(latex_expression):
+def GeneratePNGFromLaTeX(latex_expression):
     with tempfile.TemporaryDirectory() as tmpdir:
         tex_file = os.path.join(tmpdir, 'expression.tex')
         with open(tex_file, 'w') as output:
@@ -38,5 +38,5 @@ def GeneratePNGFromExpression(latex_expression):
         return io.BytesIO(open(os.path.join(tmpdir, "expression.png"), "rb").read())
 
 __all__ = [
-    'GeneratePNGFromExpression'
+    'GeneratePNGFromLaTeX'
 ]

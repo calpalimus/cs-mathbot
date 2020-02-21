@@ -1,6 +1,6 @@
 import discord
 import os
-import latex
+import graphics
 
 import parser
 
