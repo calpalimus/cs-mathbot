@@ -23,6 +23,9 @@ class StringTransformer(lark.Transformer):
             if arg.op in ('add', 'sub') or (i > 0 and arg.op == 'neg'):
                 exprs.append('(%s)' % (arg.expr,))
             else:
+                if len(exprs) > 0:
+                    if arg.expr[0].isdigit():
+                        exprs.append('\\cdot')
                 exprs.append(arg.expr)
         return self.Result('mul', ' '.join(exprs))
 
