@@ -94,6 +94,9 @@ class AdditionSimplification(lark.Transformer):
 
         if len(constant_children) > 1:
             values = [ GetNumberValue(child) for child in constant_children ]
+            if sum(values) == 0:
+                constant_children = []
+            else:
             constant_children = [ MakeNumberNode(sum(values)) ]
 
         children_to_add = constant_children + variable_children
