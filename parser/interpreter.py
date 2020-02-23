@@ -5,6 +5,7 @@ from .evaluator import EvaluateExpression
 from .output import ParseTreeToString
 from .latex import ParseTreeToLaTeX
 from graphics.latex import GeneratePNGFromLaTeX
+from graphics.plot import Plot2D
 
 bot_parser = lark.Lark(
     open(os.path.join(os.path.dirname(__file__), 'grammar.lark')),
@@ -37,16 +38,28 @@ class BotCommand(lark.Visitor):
         range_low = self.ranges[range_var][0]
         range_high = self.ranges[range_var][1]
         points = []
-        num_points = 5
+        num_points = 1000
         step = (range_high - range_low) / num_points
 
         assignments = dict(self.assignments)
         for i in range(0, num_points + 1):
             x = range_low + i * step
             assignments[range_var] = x
-            y = EvaluateExpression(expression, assignments) 
-            points.append((x,y))
-        self.result = "Graph made."
+            try:
+                y = EvaluateExpression(expression, assignments)
+                points.append((x,y)) 
+            except:
+                pass
+
+        png = Plot2D(
+            points, 
+            '$%s$' % (range_var,), 
+            '$f(%s)$' % (range_var,), 
+            '$f(x) = %s$' % (ParseTreeToLaTeX(expression),))
+        if png is not None:
+            self.result = discord.File(png,"graph.png")
+        else: 
+            self.result = "Failed."
 
     def cmd_evaluate(self, node):
         expression = node.children[1]
