@@ -76,7 +76,27 @@ class LowerNeg(lark.Transformer):
             return node
 
 @lark.v_args(tree=True)
-class AdditionSimplification(lark.Transformer):
+class Simplification(lark.Transformer):
+    def mul(self, node):
+        children = []
+        for child in node.children:
+            if child.data == 'mul':
+                children.extend(child.children)
+            else:
+                children.append(child)
+        
+        constant_children = [ child for child in children if IsNumberNode(child) ]
+        variable_children = [ child for child in children if not IsNumberNode(child) ]
+
+        if len(constant_children) > 1:
+            values = [ GetNumberValue(child) for child in constant_children ]
+            product = 1
+            for value in values: 
+                product = product * value 
+            constant_children = [ MakeNumberNode(product) ]
+
+        return lark.Tree('mul', constant_children + variable_children)
+        
     def add(self, node):
         l,r = node.children
 
@@ -114,7 +134,7 @@ def Simplify(parse_tree):
     parse_tree = RemoveSub().transform(parse_tree)
     parse_tree = LowerNeg().transform(parse_tree)
     parse_tree = MoveNumbersLeft().transform(parse_tree)
-    parse_tree = AdditionSimplification().transform(parse_tree)
+    parse_tree = Simplification().transform(parse_tree)
         #simplifier = AdditionSimplification()
     #return simplifier.transform(parse_tree)
     return parse_tree
