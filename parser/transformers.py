@@ -21,6 +21,8 @@ def GetNumberValue(node):
     raise RuntimeError('Not a constant node')
 
 def MakeNumberNode(value):
+    if value < 0:
+        return lark.Tree('neg', [MakeNumberNode(-value)])
     return lark.Tree('number', [ lark.Token('NUMBER', str(value)) ])
 
 @lark.v_args(tree=True)
@@ -97,7 +99,7 @@ class AdditionSimplification(lark.Transformer):
             if sum(values) == 0:
                 constant_children = []
             else:
-            constant_children = [ MakeNumberNode(sum(values)) ]
+                constant_children = [ MakeNumberNode(sum(values)) ]
 
         children_to_add = constant_children + variable_children
 
