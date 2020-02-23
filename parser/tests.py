@@ -6,6 +6,21 @@ class TestParser(unittest.TestCase):
         tree = parser.parse(string)
         self.assertEqual(output.ParseTreeToString(tree), expected)
     
+    def test_simplify(self):
+        self.assertEqual(
+            output.ParseTreeToString(transformers.Simplify(parser.parse('3+4'))),
+            '7')
+        self.assertEqual(
+            output.ParseTreeToString(transformers.Simplify(parser.parse('x+1'))),
+            '(+ 1 x)'
+            )
+        self.assertEqual(
+            output.ParseTreeToString(transformers.Simplify(parser.parse('(2-1)+(3+x)-(1-2)'))),
+            '(+ 5 x)')
+        self.assertEqual(
+            output.ParseTreeToString(transformers.Simplify(parser.parse('(2-1)+(3+x)-(1-pi)'))),
+            '(+ 3 (+ x (pi)))')
+
     def test_asLaTeX(self):
         self.assertEqual(
             latex.ParseTreeToLaTeX(parser.parse('abs(y) + (cos(x)+x^2)/2')),
