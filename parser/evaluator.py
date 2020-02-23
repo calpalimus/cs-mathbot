@@ -16,7 +16,7 @@ class Evaluator(lark.Transformer):
         return lhs / rhs
 
     def mul(self, *arguments):
-        return_mul = 1.0
+        return_mul = 1
         for arg in arguments:
             return_mul = return_mul * arg
         return return_mul
@@ -64,7 +64,10 @@ class Evaluator(lark.Transformer):
             raise RuntimeError("Unknown function " + FUNCTION.value)
 
     def number(self, NUMBER):
-        return float(NUMBER.value)
+        try:
+            return int(NUMBER.value)
+        except:
+            return float(NUMBER.value)
 
     def variable(self, VARIABLE):
         try:
