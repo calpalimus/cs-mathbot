@@ -7,6 +7,7 @@
     | EVALUATE expression (":" assignment_list) ?                     -> cmd_evaluate
     | GRAPH expression ":" assignment_or_range_list                   -> cmd_graph
     | LATEX expression                                                -> cmd_latex
+    | SIMPLIFY expression (":" assignment_list) ?                     -> cmd_simplify
 
 ?assignment_list: assignment ( "," assignment ) *
 
@@ -22,6 +23,7 @@ SHOW: "$show"
 EVALUATE: "$evaluate"
 GRAPH: "$graph"
 LATEX: "$latex"
+SIMPLIFY: "$simplify"
 
 variable_assignment: VARIABLE "=" expression
 variable_range: VARIABLE "=" "[" expression "," expression "]"

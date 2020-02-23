@@ -6,6 +6,7 @@ from .output import ParseTreeToString
 from .latex import ParseTreeToLaTeX
 from graphics.latex import GeneratePNGFromLaTeX
 from graphics.plot import Plot2D
+from .transformers import Simplify
 
 bot_parser = lark.Lark(
     open(os.path.join(os.path.dirname(__file__), 'grammar.lark')),
@@ -75,12 +76,19 @@ class BotCommand(lark.Visitor):
         self.result = ParseTreeToString(node.children[1])
     
     def cmd_latex(self, node):
-        latex_expression = ParseTreeToLaTeX(node.children[1])
+        self.result = self.ExprToPNG(node.children[1])
+    
+    def ExprToPNG(self, node):
+        latex_expression = ParseTreeToLaTeX(node)
         png = GeneratePNGFromLaTeX(latex_expression)
         if png is not None:
-            self.result = discord.File(png,"input.png")
+            return discord.File(png,"input.png")
         else: 
-            self.result = "Failed."
+            raise RuntimeError("Failed")        
+    
+    def cmd_simplify(self, node):
+        simplified_expression = Simplify(node.children[1])
+        self.result = self.ExprToPNG(simplified_expression)
 
 def RunBotCommand(command):
     try:
@@ -89,6 +97,8 @@ def RunBotCommand(command):
         evaluator.visit(tree)
         return evaluator.result
     except lark.exceptions.UnexpectedInput as e:
+        return str(e)
+    except RuntimeError as e:
         return str(e)
     return 'Done'
 
